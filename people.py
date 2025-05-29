@@ -37,17 +37,25 @@ class Employee:
     def change_city(self, new_city:str) -> bool:
         # Change the city 
         # Return true if city change, successful, return false if city same as old city
-        pass
+        if new_city == self.city:
+            return False
+        else:
+            self.city = new_city
+            return True
 
     def migrate_branch(self, new_code:int) -> bool:
         # Should work only on those employees who have a single 
         # branch to report to. Fail for others.
         # Change old branch to new if it is in the same city, else return false.
-        pass
+        if len(self.branches) == 1 and self.branches[0] != new_code:
+            if branchmap[self.branches[0]]["city"] == branchmap[new_code]["city"]:
+                self.branches[0] = new_code
+                return True
+        return False
 
     def increment(self, increment_amt: int) -> None:
         # Increment salary by amount specified.
-        pass
+        self.salary += increment_amt
 
 
 
@@ -62,22 +70,29 @@ class Engineer(Employee):
         super().__init__(name, age, ID, city, branchcodes, salary)
         
         # Check if position is one of  "Junior", "Senior", "Team Lead", or "Director" 
+        pstn = ["Junior","Senior","Team Lead","Director"]
+        if position in pstn:
+            self.position = position
         # Only then set the position. 
 
     
     def increment(self, amt:int) -> None:
         # While other functions are the same for and engineer,
         # and increment to an engineer's salary should add a 10% bonus on to "amt"
-        pass
+        self.salary += amt*1.1
         
     def promote(self, position:str) -> bool:
         # Return false for a demotion or an invalid promotion
         # Promotion can only be to a higher position and
         # it should call the increment function with 30% of the present salary
         # as "amt". Thereafter return True.
-        pass
-
-
+        pstn = ["Junior","Senior","Team Lead","Director"]
+        if position in pstn:
+            if pstn.index(self.position) < pstn.index(position):
+                self.increment(0.3*self.salary)
+                self.position = position
+                return True
+        return False
 
 class Salesman(Employee):
     """ 
@@ -94,27 +109,56 @@ class Salesman(Employee):
     # An extra member variable!
     superior : int # EMPLOYEE ID of the superior this guy reports to
 
-    def __init__(self, ): # Complete all this! Add arguments
-        pass
+    def __init__(self, name, age, ID, city,\
+                 branchcodes, position= "Rep", salary = None, superior = None): # Complete all this! Add arguments
+        super().__init__(name, age, ID, city, branchcodes, salary)
+        pstn = ["Rep","Manager","Head"]
+        if position in pstn:
+            self.position = position
+        self.superior = superior
     
-    # def promote 
+    # def promote
+    def promote(self, position:str) -> bool:
+        pstn = ["Rep","Manager","Head"]
+        if position in pstn:
+            if pstn.index(self.position) < pstn.index(position):
+                self.increment(0.3*self.salary)
+                self.position = position
+                return True
+        return False 
 
-    # def increment 
+    # def increment
+    def increment(self, amt:int) -> None:
+        self.salary += amt*1.05 
 
     def find_superior(self) -> tuple[int, str]:
         # Return the employee ID and name of the superior
         # Report a tuple of None, None if no superior.
-        pass
+        if self.superior == None:
+            return [None,None]
+        for sales in sales_roster:
+            if self.superior == sales.ID:
+                return [sales.ID,sales.name]
+        return [None,None]
 
     def add_superior(self) -> bool:
         # Add superior of immediately higher rank.
         # If superior doesn't exist return false,
-        pass
+        pstn = ["Rep","Manager","Head"]
+        if self.superior == None and self.position != "Head":
+            for sales in sales_roster:
+                if sales.position == pstn[pstn.index(self.position)+1]:
+                    self.superior = sales.ID
+                    return True
+        return False
 
 
     def migrate_branch(self, new_code: int) -> bool:
         # This should simply add a branch to the list; even different cities are fine
-        pass
+        if new_code not in self.branches:
+            self.branches.append(new_code)
+            return True
+        return False
 
     
 
