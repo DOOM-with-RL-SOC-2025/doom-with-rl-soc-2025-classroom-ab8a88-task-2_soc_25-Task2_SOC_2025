@@ -14,34 +14,34 @@ if __name__ == "__main__":  # Equivalent to int main() {} in C++.
 
         if last_input == 1:
             name = input("Name:")
-            ID = input("ID:")
+            ID = int(input("ID:"))
             city = input("City:")
             branchcodes = input("Branch(es):")
             # How will you convert this to a list, given that
             # the user will always enter a comma separated list of branch codes?
             # eg>   2,5
             branchcodes = [int(x.strip()) for x in branchcodes.split(",")]
-            age = input("Age: ")
-            salary = input("Salary: ")
+            age = int(input("Age: "))
+            salary = int(input("Salary: "))
             # Create a new Engineer with given details.
             engineer = Engineer(name=name, age=age, ID=ID, city=city, branchcodes=branchcodes, salary=salary)
-            engineer_roster.append(engineer) # Add him to the list! See people.py for definiton
+            # engineer_roster.append(engineer)
             
         
         elif last_input == 2:
             # Gather input to create a Salesperson
             # Then add them to the roster
             name = input("Name:")
-            ID = input("ID:")
-            age = input("Age: ")
+            ID = int(input("ID:"))
+            age = int(input("Age: "))
             city = input("City:")
             branchcodes = input("Branch(es):")
             branchcodes = [int(x.strip()) for x in branchcodes.split(",")]
-            salary = input("Salary: ")
+            salary = int(input("Salary: "))
             position = input("Position (Rep/Manager/Head): ")
             superior = input("Superior ID: ")
             sales_person = Salesman(name=name, age=age, ID=ID, city=city, branchcodes=branchcodes, position=position, superior=superior, salary=salary)
-            sales_roster.append(sales_person)
+            # sales_roster.append(sales_person)
             # pass
 
         elif last_input == 3:
@@ -61,7 +61,7 @@ if __name__ == "__main__":  # Equivalent to int main() {} in C++.
                 ## Write code here to list the branch names to
                 ## which the employee reports as a comma separated list
                 ## eg> Branches: Goregaon,Fort
-                branch_names = [branch_names[code] for code in found_employee.branchcodes]
+                branch_names = [branchmap[code]["name"] for code in found_employee.branches]
                 ## ???? what comes here??
                 print(f"Branches: {', '.join(branch_names)}")
                 
@@ -127,7 +127,7 @@ if __name__ == "__main__":  # Equivalent to int main() {} in C++.
         
         elif last_input == 8:
             ID_E = int(input("Enter Employee ID to add superior: "))
-            ID_S = int(input("Enter Employee ID of superior: "))
+            # ID_S = int(input("Enter Employee ID of superior: "))
             # Add superior of a sales employee
             found = False
             for employee in sales_roster:   
