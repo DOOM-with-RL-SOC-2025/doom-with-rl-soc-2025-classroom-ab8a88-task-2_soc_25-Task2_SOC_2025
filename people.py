@@ -20,7 +20,7 @@ class Employee:
     name : str 
     age : int
     ID : int
-    city : int
+    city : str
     branches : list[int] # This is a list of branches (as branch codes) to which the employee may report
     salary : int 
 
@@ -37,18 +37,31 @@ class Employee:
     def change_city(self, new_city:str) -> bool:
         # Change the city 
         # Return true if city change, successful, return false if city same as old city
-        pass
+        if self.city == new_city:
+            return False
+        self.city = new_city
+        return True
+        # pass
 
     def migrate_branch(self, new_code:int) -> bool:
         # Should work only on those employees who have a single 
         # branch to report to. Fail for others.
         # Change old branch to new if it is in the same city, else return false.
-        pass
+        if len(self.branches) != 1:
+            return False
+        curr_code = self.branches[0]
+        curr_city = branchmap[curr_code]["city"]
+        new_city = branchmap[new_code]["city"]
+        if curr_city != new_city:
+            return False    
+        self.branches[0] = new_code
+        return True
+        # pass
 
     def increment(self, increment_amt: int) -> None:
         # Increment salary by amount specified.
-        pass
-
+        self.salary += increment_amt
+        # pass
 
 
 
@@ -63,19 +76,32 @@ class Engineer(Employee):
         
         # Check if position is one of  "Junior", "Senior", "Team Lead", or "Director" 
         # Only then set the position. 
+        positions = ["Junior", "Senior", "Team Lead", "Director"]
+        if position in positions:
+            self.position = position
+        engineer_roster.append(self)
 
     
     def increment(self, amt:int) -> None:
         # While other functions are the same for and engineer,
         # and increment to an engineer's salary should add a 10% bonus on to "amt"
-        pass
+        self.salary += int(amt * 1.1)
+        # pass
         
     def promote(self, position:str) -> bool:
         # Return false for a demotion or an invalid promotion
         # Promotion can only be to a higher position and
         # it should call the increment function with 30% of the present salary
         # as "amt". Thereafter return True.
-        pass
+        positions = ["Junior", "Senior", "Team Lead", "Director"]
+        if position not in positions:
+            return False
+        if positions.index(position) <= positions.index(self.position):
+            return False
+        self.position = position
+        self.increment(int(self.salary * 0.3))
+        return True
+        # pass
 
 
 
@@ -94,27 +120,68 @@ class Salesman(Employee):
     # An extra member variable!
     superior : int # EMPLOYEE ID of the superior this guy reports to
 
-    def __init__(self, ): # Complete all this! Add arguments
-        pass
+    def __init__(self, name, age, ID, city,\
+                 branchcodes, position= "Rep", superior=None, salary = None ): # Complete all this! Add arguments
+        super().__init__(name, age, ID, city, branchcodes, salary)
+        positions = ["Rep", "Manager", "Head"]
+        if position in positions:
+            self.position = position
+        else:
+            self.position = "Rep"
+        self.superior = superior
+        sales_roster.append(self) 
+
     
     # def promote 
-
     # def increment 
+    def increment(self, amt:int) -> None:
+        self.salary += int(amt * 1.05)
+        
+    def promote(self, position:str) -> bool:
+        # Return false for a demotion or an invalid promotion
+        # Promotion can only be to a higher position and
+        # it should call the increment function with 30% of the present salary
+        # as "amt". Thereafter return True.
+        positions = ["Rep", "Manager", "Head"]
+        if position not in positions:
+            return False
+        if positions.index(position) <= positions.index(self.position):
+            return False
+        self.position = position
+        self.increment(int(self.salary * 0.3))
+        return True
 
     def find_superior(self) -> tuple[int, str]:
         # Return the employee ID and name of the superior
         # Report a tuple of None, None if no superior.
-        pass
+        if self.superior is None:
+            return (None, None)
+        for person in sales_roster + engineer_roster:
+            if person.ID == self.superior:
+                return (person.ID, person.name)
+        # pass
 
     def add_superior(self) -> bool:
         # Add superior of immediately higher rank.
         # If superior doesn't exist return false,
-        pass
+        # pass
+        if self.position == "Head":
+            return False
+        positions = ["Rep", "Manager", "Head"]
+        next_position = positions[positions.index(self.position) + 1]
+        for person in sales_roster + engineer_roster:
+            if person.position == next_position:
+                self.superior = person.ID
+                return True
+        return False
 
 
     def migrate_branch(self, new_code: int) -> bool:
         # This should simply add a branch to the list; even different cities are fine
-        pass
+        if new_code not in self.branches:
+            self.branches.append(new_code)
+        return True
+        # pass
 
     
 
